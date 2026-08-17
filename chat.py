@@ -17,6 +17,7 @@ DEFAULT_MODEL = os.environ.get("OLLAMA_MODEL", config["model"])
 DEFAULT_CONTEXT_LENGTH = int(
     os.environ.get("OLLAMA_CONTEXT_LENGTH", config["context_length"])
 )
+DEFAULT_KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", config["keep_alive"])
 
 
 def list_models() -> list[str]:
@@ -42,13 +43,17 @@ def print_models(active_model: str) -> None:
 
 
 def stream_chat(
-    model: str, context_length: int, messages: list[dict[str, str]]
+    model: str,
+    context_length: int,
+    keep_alive: str,
+    messages: list[dict[str, str]],
 ) -> str:
     payload = json.dumps(
         {
             "model": model,
             "messages": messages,
             "stream": True,
+            "keep_alive": keep_alive,
             "options": {"num_ctx": context_length},
         }
     ).encode()
@@ -81,6 +86,7 @@ def main() -> None:
     parser.add_argument(
         "-c", "--context-length", type=int, default=DEFAULT_CONTEXT_LENGTH
     )
+    parser.add_argument("--keep-alive", default=DEFAULT_KEEP_ALIVE)
     parser.add_argument(
         "--list-models", action="store_true", help="list installed models and exit"
     )
@@ -96,6 +102,7 @@ def main() -> None:
         stream_chat(
             model,
             args.context_length,
+            args.keep_alive,
             [{"role": "user", "content": " ".join(args.prompt)}],
         )
         return
@@ -127,7 +134,7 @@ def main() -> None:
         if not prompt:
             continue
         messages.append({"role": "user", "content": prompt})
-        answer = stream_chat(model, args.context_length, messages)
+        answer = stream_chat(model, args.context_length, args.keep_alive, messages)
         messages.append({"role": "assistant", "content": answer})
 
 

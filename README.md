@@ -60,6 +60,11 @@ python3 chat.py --model gemma3:27b "Describe this model's strengths."
 For a persistent default, edit `config.toml`. Environment variables take
 precedence over that file.
 
+Models remain loaded for 30 minutes after a request by default, avoiding repeated
+cold-load delays during a session. Override this with `--keep-alive 5m` or the
+`OLLAMA_KEEP_ALIVE` environment variable. A loaded model continues using RAM and
+VRAM until it expires, another model displaces it, or `ollama stop MODEL` is run.
+
 ## WSL memory tuning
 
 WSL currently sees about 30 GB of the host's 64 GB RAM. The default model does

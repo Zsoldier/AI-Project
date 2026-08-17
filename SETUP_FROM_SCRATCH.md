@@ -295,6 +295,7 @@ The default model is configured in `config.toml`:
 host = "http://127.0.0.1:11434"
 model = "gpt-oss:20b"
 context_length = 8192
+keep_alive = "30m"
 ```
 
 Run a one-shot test:
@@ -379,7 +380,9 @@ OLLAMA_MODEL=qwen3-coder:30b python3 chat.py
 For a persistent default, change the `model` value in `config.toml`. The
 `context_length` setting defaults to 8,192 to keep the partially offloaded 70B
 models within the available memory. Override it with `--context-length` or the
-`OLLAMA_CONTEXT_LENGTH` environment variable.
+`OLLAMA_CONTEXT_LENGTH` environment variable. Models remain resident for 30
+minutes after a request to avoid repeated cold loads; override this with
+`--keep-alive` or `OLLAMA_KEEP_ALIVE`.
 
 ## 11. Verify the coding model uses the GPU
 
