@@ -65,6 +65,20 @@ cold-load delays during a session. Override this with `--keep-alive 5m` or the
 `OLLAMA_KEEP_ALIVE` environment variable. A loaded model continues using RAM and
 VRAM until it expires, another model displaces it, or `ollama stop MODEL` is run.
 
+## VS Code Agent with Ollama
+
+The official `Ollama.ollama` VS Code extension connects from Windows. Keep WSL
+running in the background so its Ollama endpoint does not disappear between
+requests:
+
+```powershell
+pwsh -File scripts/install-wsl-keeper.ps1
+```
+
+Reload VS Code, run `Ollama: Refresh Models`, and select an Ollama model. For the
+Agents window, enable `chat.agentHost.byokModels.enabled`. `qwen3-coder:30b` is
+the recommended local Agent model on this machine.
+
 ## WSL memory tuning
 
 WSL currently sees about 30 GB of the host's 64 GB RAM. The default model does

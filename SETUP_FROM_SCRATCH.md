@@ -511,6 +511,39 @@ curl --fail --silent http://127.0.0.1:11434/api/tags
 curl --fail --silent http://127.0.0.1:11434/api/ps
 ```
 
+## Use Ollama in the VS Code Agent window
+
+Install the official `Ollama.ollama` extension and run the Windows-side keeper
+installer from this repository:
+
+```powershell
+pwsh -File scripts/install-wsl-keeper.ps1
+```
+
+The keeper creates a hidden startup entry named `AI Home Lab Ollama WSL.vbs` in
+the current Windows user's Startup folder. It keeps a foreground WSL process
+open, allowing the enabled Ollama user service to remain reachable at
+`http://127.0.0.1:11434`. Without it, a Windows-hosted VS Code extension can see
+the model list and then receive `fetch failed` when WSL exits during generation.
+
+In VS Code:
+
+1. Enable `chat.agentHost.byokModels.enabled` for the separate Agents window.
+2. Reload VS Code.
+3. Run `Ollama: Refresh Models` from the Command Palette.
+4. Select `qwen3-coder:30b` from the Ollama section of the model picker.
+
+If a request fails, verify the Windows endpoint before retrying:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:11434/api/version
+```
+
+Then run `Ollama: Diagnose Models` and inspect the Ollama output channel. The
+30B coder model is recommended for Agent workflows because it is fully GPU
+resident; the 70B-class models are much slower and each Agent task can require
+many sequential model calls.
+
 ## Final verification checklist
 
 - `nvidia-smi` works inside WSL and identifies the RTX 5090.
